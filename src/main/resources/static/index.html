@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Lobby Test - Auto Color Assignment</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; }
+    #output { white-space: pre-wrap; border: 1px solid #ccc; padding: 10px; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Lobby Test - Auto Color Assignment</h1>
+  <button onclick="createLobby()">Create Lobby</button>
+  <button onclick="joinLobby()">Join Lobby</button>
+  <button onclick="readyUp()">Ready Up</button>
+  <button onclick="changeColor()">Change Color</button>
+
+  <div id="output"></div>
+
+  <script>
+    var stompClient = null;
+    var currentLobbyId = null;
+    // We'll set currentPlayerColor after a lobby is created or joined.
+    var currentPlayerColor = null;
+
+    function setOutput(message) {
+      var outputDiv = document.getElementById("output");
+      outputDiv.innerHTML += message + "\n";
+    }
+
+    function connect() {
+      var socket = new SockJS('http://localhost:8080/ws');
+      stompClient = Stomp.over(socket);
+      stompClient.connect({}, function(frame) {
+        setOutput("Connected: " + frame);
+        stompClient.subscribe('/topic/lobby', function(message) {
+          try {
+            var data = JSON.parse(message.body);
+            setOutput("Lobby Update:\n" + JSON.stringify(data, null, 2));
+            if (data.lobbyId) {
+              currentLobbyId = data.lobbyId;
+              // If currentPlayerColor is null and we just created the lobby,
+              // assume the host was assigned "red" automatically.
+              if (!currentPlayerColor && data.players && data.players.length > 0) {
+                // In our server-side createLobby, we force the host to be red.
+                currentPlayerColor = "red";
+                setOutput("Assigned host color: red");
+              }
+            }
+          } catch (e) {
+            setOutput("Message: " + message.body);
+          }
+        });
+      });
+    }
+
+    // When creating a lobby, we send an empty color so the server auto-assigns.
+    function createLobby() {
+      var msg = {
+        action: "create",
+        color: "" // Leave blank to trigger auto-assignment (host will get "red")
+      };
+      stompClient.send("/app/createLobby", {}, JSON.stringify(msg));
+      // For the host, we assume the default auto-assignment is red.
+      currentPlayerColor = "red";
+      setOutput("Creating lobby... (host will be assigned 'red')");
+    }
+
+    // When joining, we also send an empty color so the server auto-assigns the next available.
+    function joinLobby() {
+      if (!currentLobbyId) {
+        alert("No lobby available. Create a lobby first.");
+        return;
+      }
+      var msg = {
+        action: "join",
+        lobbyId: currentLobbyId,
+        color: "" // empty triggers auto-assignment of the first available color (e.g. blue)
+      };
+      stompClient.send("/app/joinLobby", {}, JSON.stringify(msg));
+      setOutput("Joining lobby... (await auto-assignment of your color)");
+    }
+
+    // Ready up using the currentPlayerColor.
+    // If the client isn’t sure what color they have, they should check the lobby update.
+    function readyUp() {
+      if (!currentLobbyId) {
+        alert("Join a lobby first.");
+        return;
+      }
+      if (!currentPlayerColor) {
+        // In a more sophisticated client, you would correlate your session with your assigned color.
+        currentPlayerColor = prompt("Enter your assigned color (as seen in the lobby output):", "");
+      }
+      var msg = {
+        action: "ready",
+        lobbyId: currentLobbyId,
+        color: currentPlayerColor,
+        ready: true
+      };
+      stompClient.send("/app/ready", {}, JSON.stringify(msg));
+      setOutput("Sending ready message with color: " + currentPlayerColor);
+    }
+
+    // Request to change color. The user enters a new desired color.
+    // They must also provide their current color (which we assume is stored in currentPlayerColor).
+    function changeColor() {
+      if (!currentLobbyId) {
+        alert("Join a lobby first.");
+        return;
+      }
+      var newColor = prompt("Enter the new desired color (red, blue, green, yellow, black):", "");
+      if (!newColor) return;
+      var oldColor = currentPlayerColor ? currentPlayerColor : prompt("Enter your current assigned color:", "");
+      var msg = {
+        action: "changeColor",
+        lobbyId: currentLobbyId,
+        oldColor: oldColor,
+        color: newColor
+      };
+      stompClient.send("/app/changeColor", {}, JSON.stringify(msg));
+      currentPlayerColor = newColor; // Optimistically update local state.
+      setOutput("Requesting color change from " + oldColor + " to " + newColor);
+    }
+
+    connect();
+  </script>
+</body>
+</html>
