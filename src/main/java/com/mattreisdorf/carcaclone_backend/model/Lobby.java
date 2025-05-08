@@ -85,7 +85,7 @@ public class Lobby {
       "lobbyId = " + lobbyId + '\'' +
       ", players = " + players + '\'' +
       ", isGameStarted = " + isGameStarted + '\'' +
-      ", isPrivate = " + isPrivateLobby + '\'' + '}'
+      ", isPrivateLobby = " + isPrivateLobby + '\'' + '}'
     );
   }
 }
