@@ -7,6 +7,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
+import com.mattreisdorf.carcaclone_backend.dto.lobby_messages.ChangeColorMessage;
 import com.mattreisdorf.carcaclone_backend.dto.lobby_messages.CreateLobbyMessage;
 import com.mattreisdorf.carcaclone_backend.dto.lobby_messages.JoinLobbyMessage;
 import com.mattreisdorf.carcaclone_backend.dto.lobby_messages.PlayerReadyMessage;
@@ -68,5 +69,18 @@ public class LobbyController {
     messagingTemplate.convertAndSend(
         "/topic/lobby/" + message.getLobbyId(),
         lobby);
+  }
+
+  @MessageMapping("/changeColor")
+  public void changePlayerColor(ChangeColorMessage message) {
+    System.out.println(message.toString());
+    Lobby lobby = lobbyManager.changePlayerColor(message.getPlayerId(), message.getPlayerColor(), message.getNewPlayerColor(), message.getLobbyId());
+    if (lobby == null) {
+      return;
+    }
+    messagingTemplate.convertAndSend(
+      "/topic/lobby/" + message.getLobbyId(),
+      lobby
+    );
   }
 }

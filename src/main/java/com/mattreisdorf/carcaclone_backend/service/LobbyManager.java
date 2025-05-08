@@ -15,7 +15,7 @@ public class LobbyManager {
 
   // Hold a map of active lobbies
   private final Map<String, Lobby> lobbies = new ConcurrentHashMap<>();
-  
+
   // Create a new lobby
   public Lobby createLobby(String playerId, String playerName) {
     // Create new Player
@@ -40,11 +40,11 @@ public class LobbyManager {
   // Get all active public lobbies
   public Collection<Lobby> getAllLobbies() {
     return lobbies.values()
-      // Stream and filter lobbies when lobby is not set to private or already started
-      .stream()
-      .filter(lobby -> !lobby.isPrivateLobby() && !lobby.isGameStarted())
-      // Collect those lobbies into a new list that is returned
-      .collect(Collectors.toList());
+        // Stream and filter lobbies when lobby is not set to private or already started
+        .stream()
+        .filter(lobby -> !lobby.isPrivateLobby() && !lobby.isGameStarted())
+        // Collect those lobbies into a new list that is returned
+        .collect(Collectors.toList());
   }
 
   // Add player to active public lobby
@@ -67,7 +67,8 @@ public class LobbyManager {
   // Set a player in a lobby as ready
   public Lobby setPlayerReady(String playerId, String lobbyId, boolean isPlayerReady) {
     Lobby lobby = getLobby(lobbyId);
-    lobby.getPlayers().stream().filter(player -> player.getPlayerId().equalsIgnoreCase(playerId)).findFirst().ifPresent(player -> player.setPlayerReady(isPlayerReady));
+    lobby.getPlayers().stream().filter(player -> player.getPlayerId().equalsIgnoreCase(playerId)).findFirst()
+        .ifPresent(player -> player.setPlayerReady(isPlayerReady));
     return lobby;
   }
 
@@ -75,6 +76,22 @@ public class LobbyManager {
   public Lobby setLobbyPrivate(String lobbyId, boolean isLobbyPrivate) {
     Lobby lobby = getLobby(lobbyId);
     lobby.setIsPrivateLobby(isLobbyPrivate);
+    return lobby;
+  }
+
+  // Change player color
+  public Lobby changePlayerColor(String playerId, String currentPlayerColor, String newPlayerColor, String lobbyId) {
+    Lobby lobby = getLobby(lobbyId);
+    lobby.getPlayers().stream().filter(p -> p.getPlayerColor().equalsIgnoreCase(currentPlayerColor)).findFirst()
+        .ifPresent(player -> {
+          // Change color if new color isn't taken
+          // Should be locked by front end, but just in case
+          boolean colorTaken = lobby.getPlayers().stream()
+              .anyMatch(p -> p.getPlayerColor().equalsIgnoreCase(newPlayerColor));
+          if (!colorTaken) {
+            player.setPlayerColor(newPlayerColor);
+          }
+        });
     return lobby;
   }
 }
