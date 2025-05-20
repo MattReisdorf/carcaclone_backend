@@ -12,7 +12,11 @@ import com.mattreisdorf.carcaclone_backend.dto.lobby_messages.CreateLobbyMessage
 import com.mattreisdorf.carcaclone_backend.dto.lobby_messages.JoinLobbyMessage;
 import com.mattreisdorf.carcaclone_backend.dto.lobby_messages.PlayerReadyMessage;
 import com.mattreisdorf.carcaclone_backend.dto.lobby_messages.PrivateLobbyMessage;
+import com.mattreisdorf.carcaclone_backend.dto.lobby_messages.StartGameMessage;
+import com.mattreisdorf.carcaclone_backend.dto.lobby_messages.StartGameResponse;
+import com.mattreisdorf.carcaclone_backend.model.Game;
 import com.mattreisdorf.carcaclone_backend.model.Lobby;
+import com.mattreisdorf.carcaclone_backend.service.GameManager;
 import com.mattreisdorf.carcaclone_backend.service.LobbyManager;
 
 @Controller
@@ -20,6 +24,9 @@ public class LobbyController {
 
   @Autowired
   private LobbyManager lobbyManager;
+
+  @Autowired
+  private GameManager gameManager;
 
   @Autowired
   private SimpMessagingTemplate messagingTemplate;
@@ -74,13 +81,31 @@ public class LobbyController {
   @MessageMapping("/changeColor")
   public void changePlayerColor(ChangeColorMessage message) {
     System.out.println(message.toString());
-    Lobby lobby = lobbyManager.changePlayerColor(message.getPlayerId(), message.getPlayerColor(), message.getNewPlayerColor(), message.getLobbyId());
+    Lobby lobby = lobbyManager.changePlayerColor(message.getPlayerId(), message.getPlayerColor(),
+        message.getNewPlayerColor(), message.getLobbyId());
     if (lobby == null) {
       return;
     }
     messagingTemplate.convertAndSend(
-      "/topic/lobby/" + message.getLobbyId(),
-      lobby
-    );
+        "/topic/lobby/" + message.getLobbyId(),
+        lobby);
+  }
+
+  @MessageMapping("/startGame")
+  public void startGame(StartGameMessage message) {
+    // System.out.println("\n" + message.toString());
+
+    Lobby lobby = lobbyManager.getLobby(message.getLobbyId());
+    if (lobby == null)
+      return;
+
+    Game game = gameManager.createGameFromLobby(lobby);
+
+    // System.out.println(game.toString());
+
+    messagingTemplate.convertAndSend(
+        "/topic/lobby/" + message.getLobbyId() + "/start",
+        new StartGameResponse(message.getLobbyId(), game.getGameId()));
+
   }
 }
