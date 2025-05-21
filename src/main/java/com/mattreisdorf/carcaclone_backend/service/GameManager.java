@@ -30,4 +30,9 @@ public class GameManager {
     return game;
   }
 
+
+  public Game getGame(String gameId) {
+    return games.get(gameId);
+  }
+
 }
