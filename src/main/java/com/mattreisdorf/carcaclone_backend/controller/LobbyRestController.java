@@ -31,10 +31,6 @@ public class LobbyRestController {
   @GetMapping("/{lobbyId}")
   public ResponseEntity<Lobby> getLobby(@PathVariable String lobbyId) {
     Lobby lobby = lobbyManager.getLobby(lobbyId);
-    if (lobby == null) {
-      return ResponseEntity.notFound().build();
-    }
-    System.out.println(lobby.toString());
-    return ResponseEntity.ok(lobby);
+    return (lobby == null) ? ResponseEntity.notFound().build() : ResponseEntity.ok(lobby);
   }
 }
