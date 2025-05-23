@@ -20,6 +20,7 @@ import com.mattreisdorf.carcaclone_backend.service.GameManager;
 import com.mattreisdorf.carcaclone_backend.service.LobbyManager;
 
 @Controller
+@MessageMapping("/lobby")
 public class LobbyController {
 
   @Autowired
@@ -80,7 +81,6 @@ public class LobbyController {
 
   @MessageMapping("/changeColor")
   public void changePlayerColor(ChangeColorMessage message) {
-    System.out.println(message.toString());
     Lobby lobby = lobbyManager.changePlayerColor(message.getPlayerId(), message.getPlayerColor(),
         message.getNewPlayerColor(), message.getLobbyId());
     if (lobby == null) {
@@ -93,16 +93,10 @@ public class LobbyController {
 
   @MessageMapping("/startGame")
   public void startGame(StartGameMessage message) {
-    // System.out.println("\n" + message.toString());
-
     Lobby lobby = lobbyManager.getLobby(message.getLobbyId());
     if (lobby == null)
       return;
-
     Game game = gameManager.createGameFromLobby(lobby);
-
-    // System.out.println(game.toString());
-
     messagingTemplate.convertAndSend(
         "/topic/lobby/" + message.getLobbyId() + "/start",
         new StartGameResponse(message.getLobbyId(), game.getGameId()));
