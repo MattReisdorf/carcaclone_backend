@@ -20,6 +20,35 @@ public class TileFactory {
     }
   }
 
+  public static Tile createFirstTile() {
+    Tile startingTile = new Tile(
+      TileCode.CRFR,
+      List.of(
+        new TileSegment(
+          TileFeature.CITY,
+          Set.of(
+            EdgeDirection.NORTH
+          )
+        ),
+        new TileSegment(
+          TileFeature.ROAD,
+          Set.of(
+            EdgeDirection.EAST,
+            EdgeDirection.WEST
+          )
+        ),
+        new TileSegment(
+          TileFeature.FIELD,
+          Set.of(
+            EdgeDirection.SOUTH
+          )
+        )
+      )
+    );
+
+    return startingTile;
+  }
+
   public static Deque<Tile> createTileBag() {
     List<Tile> tileBag = new ArrayList<>();
 
