@@ -52,7 +52,7 @@ public class LobbyManager {
     Lobby lobby = getLobby(lobbyId);
     if (lobby != null) {
       boolean alreadyJoined = false;
-      if (playerId != null & playerName != null) {
+      if (playerId != null && playerName != null) {
         alreadyJoined = lobby.getPlayers().stream().anyMatch(player -> player.getPlayerId().equals(playerId));
       }
 
@@ -82,12 +82,13 @@ public class LobbyManager {
   // Change player color
   public Lobby changePlayerColor(String playerId, String currentPlayerColor, String newPlayerColor, String lobbyId) {
     Lobby lobby = getLobby(lobbyId);
-    lobby.getPlayers().stream().filter(p -> p.getPlayerColor().equalsIgnoreCase(currentPlayerColor)).findFirst()
+    lobby.getPlayers().stream().filter(p -> p.getPlayerId().equalsIgnoreCase(playerId)).findFirst()
         .ifPresent(player -> {
           // Change color if new color isn't taken
           // Should be locked by front end, but just in case
           boolean colorTaken = lobby.getPlayers().stream()
-              .anyMatch(p -> p.getPlayerColor().equalsIgnoreCase(newPlayerColor));
+              .anyMatch(p -> !p.getPlayerId().equalsIgnoreCase(playerId)
+                  && p.getPlayerColor().equalsIgnoreCase(newPlayerColor));
           if (!colorTaken) {
             player.setPlayerColor(newPlayerColor);
           }
