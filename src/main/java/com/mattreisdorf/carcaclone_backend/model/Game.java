@@ -19,6 +19,7 @@ public class Game {
   private GameState gameState;
   @JsonIgnore
   private Deque<Tile> tileBag;
+  private Board board;
 
   public Game(List<Player> playersCopy) {
     this.gameId = UUID.randomUUID().toString();
@@ -26,6 +27,8 @@ public class Game {
     this.currentPlayerIndex = new Random().nextInt(playersCopy.size()); // Should pick random starting player
     this.gameState = GameState.NOT_STARTED;
     this.tileBag = TileFactory.createTileBag();
+    this.board = new Board();
+    board.placeStartingTile();
   }
 
   public String getCurrentPlayerId() {
@@ -63,14 +66,21 @@ public class Game {
     this.gameState = gameState;
   }
 
-  // @JsonIgnore
-  // public Deque<Tile> getTileBag() {
-  //   return tileBag;
-  // }
-  // @JsonIgnore
-  // public void setTileBag(Deque<Tile> tileBag) {
-  //   this.tileBag = tileBag;
-  // }
+  @JsonIgnore
+  public Deque<Tile> getTileBag() {
+    return tileBag;
+  }
+  @JsonIgnore
+  public void setTileBag(Deque<Tile> tileBag) {
+    this.tileBag = tileBag;
+  }
+
+  public Board getBoard() {
+    return board;
+  }
+  public void setBoard(Board board) {
+    this.board = board;
+  }
 
   @JsonProperty("tileBag")
   public List<Tile> getTileBagForDebug() {

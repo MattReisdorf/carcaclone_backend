@@ -1,6 +1,5 @@
 package com.mattreisdorf.carcaclone_backend.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,9 +12,12 @@ import com.mattreisdorf.carcaclone_backend.service.GameManager;
 @RestController
 @RequestMapping("/api/games")
 public class GameRestController {
-  
-  @Autowired
-  private GameManager gameManager;
+
+  private final GameManager gameManager;
+
+  public GameRestController(GameManager gameManager) {
+    this.gameManager = gameManager;
+  }
 
   @GetMapping("/{gameId}")
   public ResponseEntity<Game> getGame(@PathVariable String gameId) {

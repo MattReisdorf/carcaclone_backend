@@ -3,7 +3,6 @@ package com.mattreisdorf.carcaclone_backend.controller;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,9 +15,12 @@ import com.mattreisdorf.carcaclone_backend.service.LobbyManager;
 @RestController
 @RequestMapping("/api/lobbies")
 public class LobbyRestController {
-  
-  @Autowired
-  private LobbyManager lobbyManager;
+
+  private final LobbyManager lobbyManager;
+
+  public LobbyRestController(LobbyManager lobbyManager) {
+    this.lobbyManager = lobbyManager;
+  }
 
   // Endpoint for listing all active public lobbies
   @GetMapping

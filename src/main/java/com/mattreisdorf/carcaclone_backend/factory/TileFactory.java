@@ -20,6 +20,35 @@ public class TileFactory {
     }
   }
 
+  public static Tile createFirstTile() {
+    Tile startingTile = new Tile(
+      TileCode.CRFR,
+      List.of(
+        new TileSegment(
+          TileFeature.CITY,
+          Set.of(
+            EdgeDirection.NORTH
+          )
+        ),
+        new TileSegment(
+          TileFeature.ROAD,
+          Set.of(
+            EdgeDirection.EAST,
+            EdgeDirection.WEST
+          )
+        ),
+        new TileSegment(
+          TileFeature.FIELD,
+          Set.of(
+            EdgeDirection.SOUTH
+          )
+        )
+      )
+    );
+
+    return startingTile;
+  }
+
   public static Deque<Tile> createTileBag() {
     List<Tile> tileBag = new ArrayList<>();
 
@@ -266,21 +295,21 @@ public class TileFactory {
         new TileSegment(
           TileFeature.CITY,
           Set.of(
-            EdgeDirection.NORTH,
-            EdgeDirection.SOUTH
+            EdgeDirection.EAST,
+            EdgeDirection.WEST
           ),
           true
         ),
         new TileSegment(
           TileFeature.FIELD,
           Set.of(
-            EdgeDirection.EAST
+            EdgeDirection.NORTH
           )
         ),
         new TileSegment(
           TileFeature.FIELD,
           Set.of(
-            EdgeDirection.WEST
+            EdgeDirection.SOUTH
           )
         )
       ),
@@ -294,20 +323,20 @@ public class TileFactory {
         new TileSegment(
           TileFeature.CITY,
           Set.of(
-            EdgeDirection.NORTH,
-            EdgeDirection.SOUTH
-          )
-        ),
-        new TileSegment(
-          TileFeature.FIELD,
-          Set.of(
-            EdgeDirection.EAST
-          )
-        ),
-        new TileSegment(
-          TileFeature.FIELD,
-          Set.of(
+            EdgeDirection.EAST,
             EdgeDirection.WEST
+          )
+        ),
+        new TileSegment(
+          TileFeature.FIELD,
+          Set.of(
+            EdgeDirection.NORTH
+          )
+        ),
+        new TileSegment(
+          TileFeature.FIELD,
+          Set.of(
+            EdgeDirection.SOUTH
           )
         )
       ),
@@ -321,20 +350,20 @@ public class TileFactory {
         new TileSegment(
           TileFeature.CITY,
           Set.of(
-            EdgeDirection.NORTH
+            EdgeDirection.EAST
           )
         ),
         new TileSegment(
           TileFeature.CITY,
           Set.of(
-            EdgeDirection.SOUTH
+            EdgeDirection.WEST
           )
         ),
         new TileSegment(
           TileFeature.FIELD,
           Set.of(
-            EdgeDirection.EAST,
-            EdgeDirection.WEST
+            EdgeDirection.NORTH,
+            EdgeDirection.SOUTH
           )
         )
       ),
@@ -509,13 +538,13 @@ public class TileFactory {
           Set.of(
             EdgeDirection.NORTH,
             EdgeDirection.EAST,
-            EdgeDirection.SOUTH
+            EdgeDirection.WEST
           )
         ),
         new TileSegment(
           TileFeature.ROAD,
           Set.of(
-            EdgeDirection.WEST
+            EdgeDirection.SOUTH
           )
         )
       ),
@@ -551,16 +580,21 @@ public class TileFactory {
       TileCode.FRFR,
       List.of(
         new TileSegment(
-          TileFeature.FIELD,
+          TileFeature.ROAD,
           Set.of(
             EdgeDirection.NORTH,
             EdgeDirection.SOUTH          
           )
         ),
         new TileSegment(
-          TileFeature.ROAD,
+          TileFeature.FIELD,
           Set.of(
-            EdgeDirection.EAST,
+            EdgeDirection.EAST
+          )
+        ),
+        new TileSegment(
+          TileFeature.FIELD,
+          Set.of(
             EdgeDirection.WEST
           )
         )
