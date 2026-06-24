@@ -35,6 +35,8 @@ public class LobbyController {
   // Create a new lobby
   @MessageMapping("/createLobby")
   public void createLobby(CreateLobbyMessage message, Principal principal) {
+    System.out.println(principal.getName());
+
     Lobby lobby = lobbyManager.createLobby(message.getPlayerId(), message.getPlayerName());
     if (lobby == null) {
       return;

@@ -6,9 +6,11 @@ import com.mattreisdorf.carcaclone_backend.enums.EdgeDirection;
 import com.mattreisdorf.carcaclone_backend.enums.TileFeature;
 
 public class TileSegment {
-  private final TileFeature tileFeature;
-  private final Set<EdgeDirection> connects;
-  private final boolean hasShield;
+  private TileFeature tileFeature;
+  private Set<EdgeDirection> connects;
+  private boolean hasShield;
+
+  public TileSegment() {};
 
   public TileSegment(TileFeature tileFeature, Set<EdgeDirection> connects) {
     this.tileFeature = tileFeature;
@@ -25,10 +27,31 @@ public class TileSegment {
   public TileFeature getTileFeature() {
     return tileFeature;
   }
+  public void setTileFeature(TileFeature tileFeature) {
+    this.tileFeature = tileFeature;
+  }
+
   public Set<EdgeDirection> getConnects() {
     return connects;
   }
+  public void setConnects(Set<EdgeDirection> connects) {
+    this.connects = connects;
+  }
+
   public boolean hasShield() {
     return hasShield;
+  }
+  public void setHasShield(boolean hasShield) {
+    this.hasShield = hasShield;
+  }
+
+  @Override
+  public String toString() {
+    return (
+      "TileSegment: { " +
+      "tileFeature: " + tileFeature +
+      ", connects: " + connects +
+      ", hasShield: " + hasShield + " }"
+    );
   }
 }
