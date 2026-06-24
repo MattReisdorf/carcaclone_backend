@@ -3,7 +3,6 @@ package com.mattreisdorf.carcaclone_backend.controller;
 import java.security.Principal;
 
 import com.mattreisdorf.carcaclone_backend.service.ProfanityFilter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -18,20 +17,20 @@ import com.mattreisdorf.carcaclone_backend.service.PlayerSessionService;
 @Controller
 public class ChatController {
 
-  @Autowired
   private final ProfanityFilter profanityFilter;
+  private final SimpMessagingTemplate messagingTemplate;
+  private final LobbyManager lobbyManager;
+  private final PlayerSessionService playerSessionService;
 
-  @Autowired
-  private SimpMessagingTemplate messagingTemplate;
-
-  @Autowired
-  private LobbyManager lobbyManager;
-
-  @Autowired
-  private PlayerSessionService playerSessionService;
-
-  ChatController(ProfanityFilter profanityFilter) {
+  public ChatController(
+      ProfanityFilter profanityFilter,
+      SimpMessagingTemplate messagingTemplate,
+      LobbyManager lobbyManager,
+      PlayerSessionService playerSessionService) {
     this.profanityFilter = profanityFilter;
+    this.messagingTemplate = messagingTemplate;
+    this.lobbyManager = lobbyManager;
+    this.playerSessionService = playerSessionService;
   }
 
   @MessageMapping("/chat/{lobbyId}")

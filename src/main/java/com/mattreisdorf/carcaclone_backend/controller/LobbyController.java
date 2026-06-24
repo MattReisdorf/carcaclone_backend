@@ -2,7 +2,6 @@ package com.mattreisdorf.carcaclone_backend.controller;
 
 import java.security.Principal;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
@@ -25,17 +24,21 @@ import com.mattreisdorf.carcaclone_backend.service.PlayerSessionService;
 @MessageMapping("/lobby")
 public class LobbyController {
 
-  @Autowired
-  private LobbyManager lobbyManager;
+  private final LobbyManager lobbyManager;
+  private final GameManager gameManager;
+  private final SimpMessagingTemplate messagingTemplate;
+  private final PlayerSessionService playerSessionService;
 
-  @Autowired
-  private GameManager gameManager;
-
-  @Autowired
-  private SimpMessagingTemplate messagingTemplate;
-
-  @Autowired
-  private PlayerSessionService playerSessionService;
+  public LobbyController(
+      LobbyManager lobbyManager,
+      GameManager gameManager,
+      SimpMessagingTemplate messagingTemplate,
+      PlayerSessionService playerSessionService) {
+    this.lobbyManager = lobbyManager;
+    this.gameManager = gameManager;
+    this.messagingTemplate = messagingTemplate;
+    this.playerSessionService = playerSessionService;
+  }
 
   // Create a new lobby
   @MessageMapping("/createLobby")

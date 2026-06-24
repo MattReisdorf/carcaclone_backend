@@ -1,6 +1,5 @@
 package com.mattreisdorf.carcaclone_backend.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,8 +13,11 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/api/session")
 public class SessionController {
 
-  @Autowired
-  private PlayerSessionService playerSessionService;
+  private final PlayerSessionService playerSessionService;
+
+  public SessionController(PlayerSessionService playerSessionService) {
+    this.playerSessionService = playerSessionService;
+  }
 
   @GetMapping("/me")
   public PlayerSessionResponse getOrCreateSession(HttpSession session) {

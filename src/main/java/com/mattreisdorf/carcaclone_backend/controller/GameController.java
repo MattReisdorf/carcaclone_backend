@@ -2,7 +2,6 @@ package com.mattreisdorf.carcaclone_backend.controller;
 
 import java.security.Principal;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -19,12 +18,14 @@ import com.mattreisdorf.carcaclone_backend.service.GameManager;
 @Controller
 @MessageMapping("/game")
 public class GameController {
-  
-  @Autowired
-  private GameManager gameManager;
 
-  @Autowired
-  private SimpMessagingTemplate messagingTemplate;
+  private final GameManager gameManager;
+  private final SimpMessagingTemplate messagingTemplate;
+
+  public GameController(GameManager gameManager, SimpMessagingTemplate messagingTemplate) {
+    this.gameManager = gameManager;
+    this.messagingTemplate = messagingTemplate;
+  }
 
   @MessageMapping("/{gameId}/start") 
   public void startGame(@DestinationVariable String gameId, StartMessage message) {
